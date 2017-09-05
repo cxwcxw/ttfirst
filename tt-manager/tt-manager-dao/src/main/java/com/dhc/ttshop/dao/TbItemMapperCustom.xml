@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dhc.ttshop.dao.TbItemMapperCustom" >
+  <sql id="Base_Column_List" >
+    i.id, i.title, i.sell_point as sellPoint, i.price, i.num, i.barcode, i.image, i.cid,
+     CASE i.status
+		WHEN 1 THEN "正常"
+		WHEN 2 THEN "下架"
+		WHEN 3 THEN "删除"
+		ELSE "未知" END as statusName,
+        i.created, i.updated,c.name as catName
+  </sql>
+  <select id="selectByPage" resultType="com.dhc.ttshop.pojo.vo.TbItemCustom">
+    SELECT
+    <include refid="Base_Column_List" />
+    from tb_item i
+    left join tb_item_cat c on i.cid=c.id
+    WHERE i.status != 3
+    group by i.id
+    limit #{off},#{rows}
+  </select>
+  <select id="counts" resultType="_long">
+    SELECT COUNT(1)
+    FROM tb_item
+  </select>
+</mapper>
